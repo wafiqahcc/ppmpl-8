@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+    environment {
+        CI = 'true'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Mengambil kode dari repository Git
+                git branch: 'main', url: 'https://github.com/wafiqahcc/ppmpl-8.git'
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                // Menginstall dependensi Node.js
+                sh 'npm install'
+            }
+        }
+        stage('Run Unit Tests') {
+            steps {
+                // Menjalankan pengujian unit menggunakan Jest
+                sh 'npm test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // Simulasi deployment aplikasi
+                echo 'Deploying application...'
+                // Tambahkan skrip deployment jika diperlukan
+            }
+        }
+    }
+    post {
+        success {
+            // Tampilkan pesan jika pipeline berhasil
+            echo 'Pipeline finished successfully!'
+            // Kirim notifikasi email untuk build sukses
+            emailext subject: 'Build Succeeded',
+                     body: 'The build for project ppmpl-8 succeeded!',
+                     recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+        }
+        failure {
+            // Tampilkan pesan jika pipeline gagal
+            echo 'Pipeline failed!'
+            // Kirim notifikasi email untuk build gagal
+            emailext subject: 'Build Failed',
+                     body: 'The build for project ppmpl-8 failed. Please check the Jenkins logs for details.',
+                     recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+        }
+    }
+}
